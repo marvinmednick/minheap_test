@@ -6,11 +6,11 @@ fn main() {
     println!("Hello, world!");
 
 
-    let mut v = MinHeap::<u32>::new();
+    let mut v = MinHeap::<i32>::new();
     v.insert(1,61);
-    v.insert(2,60);
+    v.insert(2,-60);
     v.insert(3,50);
-    v.insert(4,10);
+    v.insert(4,-10);
     v.insert(5,18);
     v.insert(6,40);
 
@@ -78,20 +78,17 @@ mod tests {
     fn test3() {
         use crate::minheap::MinHeap;
 
-        let mut v = MinHeap::<u32>::new();
-        v.insert(1,10);
+        let mut v = MinHeap::<i32>::new();
+        v.insert(1,-10);
         v.insert(2,5);
-        v.insert(3,1);
+        v.insert(3,-1);
         v.insert(4,3);
-        v.update(2,11);
-        v.update(3,2);
-        v.update(1,2);
 
 
-        assert_eq!(v.get_min(),Some(1));
-        assert_eq!(v.get_min(),Some(2));
+        assert_eq!(v.get_min(),Some(-10));
+        assert_eq!(v.get_min(),Some(-1));
         assert_eq!(v.get_min(),Some(3));
-        assert_eq!(v.get_min(),Some(11));
+        assert_eq!(v.get_min(),Some(5));
 
     }
 
