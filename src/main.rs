@@ -92,6 +92,108 @@ mod tests {
 
     }
 
+    #[test]
+    fn test4_enum() {
+        use crate::minheap::MinHeap;
+
+        #[derive(Debug)]
+        struct SimpleInfo {
+            id: u32,
+            weight: u32,
+        }
+
+        #[derive(Debug)]
+        struct CompoundInfo {
+            id: u32,
+            weight: u32,
+            low: u32,
+            high: u32,
+
+        }
+
+        #[derive(Debug)]
+        enum TestSort {
+            Simple(SimpleInfo),
+            Compound(CompoundInfo)
+        }
+
+        impl TestSort {
+            pub fn get_weight(self) -> u32 {
+                match self {
+                    Simple(a) => a.weight,
+                    Compound(a) => a.weight,
+                }
+
+            }
+        }
+
+        use std::cmp::Ordering;
+
+        impl Ord for TestSort {
+            fn cmp(&self, other: &Self) -> Ordering {
+
+                match (self, other) {
+                    (Simple(a), Simple(b)) =>  a.weight.cmp(&b.weight),
+                    (Simple(a), Compound(b)) =>  a.weight.cmp(&b.weight),
+                    (Compound(a), Simple(b)) =>  a.weight.cmp(&b.weight),
+                    (Compound(a), Compound(b)) =>  a.weight.cmp(&b.weight),
+                    _ => Ordering::Less
+                }
+            }
+        }
+
+        impl PartialOrd for TestSort {
+            fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+
+                match (self, other) {
+                    (Simple(a), Simple(b)) =>  a.weight.partial_cmp(&b.weight),
+                    (Simple(a), Compound(b)) =>  a.weight.partial_cmp(&b.weight),
+                    (Compound(a), Simple(b)) =>  a.weight.partial_cmp(&b.weight),
+                    (Compound(a), Compound(b)) =>  a.weight.partial_cmp(&b.weight),
+                    _ => Some(Ordering::Less)
+                }
+            }
+        }
+
+        impl PartialEq for TestSort {
+            fn eq(&self, other: &Self) -> bool {
+                match (self, other) {
+                    (Simple(a), Simple(b)) =>  a.weight == b.weight,
+                    (Simple(a), Compound(b)) =>  a.weight == b.weight,
+                    (Compound(a), Simple(b)) =>  a.weight == b.weight,
+                    (Compound(a), Compound(b)) =>  a.weight == b.weight,
+                    _ => false
+                }
+            }
+        }
+
+        impl Eq for TestSort { }
+
+        use TestSort::Simple;
+        use TestSort::Compound;
+
+        let mut v = MinHeap::<TestSort>::new();
+        let mut id=1;
+        v.insert(id,Simple(SimpleInfo {id: id,weight: 1}));   id +=1;
+        v.insert(id,Simple(SimpleInfo {id: id,weight: 3})); id +=1;
+        v.insert(id,Simple(SimpleInfo {id: id,weight: 5})); id +=1;
+        v.insert(id,Compound(CompoundInfo {id: id,weight: 6,low: 1, high: 2})); id +=1;
+        v.insert(id,Compound(CompoundInfo {id: id,weight: 20,low: 1, high: 2})); id +=1;
+        v.insert(id,Compound(CompoundInfo {id: id,weight: 1,low: 1, high: 2})); id +=1;
+        v.insert(id,Compound(CompoundInfo {id: id,weight: 2,low: 1, high: 2})); id +=1;
+        v.insert(id,Simple(SimpleInfo {id: 2,weight: 8})); id +=1;
+        assert!(v.validate_heap());
+        assert_eq!(v.get_min().unwrap().get_weight(),1);
+        assert_eq!(v.get_min().unwrap().get_weight(),1);
+        assert_eq!(v.get_min().unwrap().get_weight(),2);
+        assert_eq!(v.get_min().unwrap().get_weight(),3);
+        assert_eq!(v.get_min().unwrap().get_weight(),5);
+        assert_eq!(v.get_min().unwrap().get_weight(),6);
+        assert_eq!(v.get_min().unwrap().get_weight(),8);
+        assert_eq!(v.get_min().unwrap().get_weight(),20);
+
+    }
+
 
 
 }
